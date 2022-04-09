@@ -52,6 +52,11 @@ func startLoopOperation(b *Brainfuck) error {
 }
 
 func endLoopOperation(b *Brainfuck) error {
+
+	if len(b.loopStack) == 0 {
+		return LoopEndInvalidError
+	}
+
 	if b.getCurrentCellValue() > 0 {
 		loop := peekStack(b)
 		end := b.CommandPointer

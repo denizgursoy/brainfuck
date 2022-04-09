@@ -222,4 +222,16 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 		assert.Equal(t, brainfuck.CommandPointer, end)
 		assert.Equal(t, len(brainfuck.loopStack), 0)
 	})
+
+	t.Run("should return error is stack is empty", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		brainfuck.DataPointer = 4
+		brainfuck.Data[brainfuck.DataPointer] = 0
+
+		err := endLoopOperation(brainfuck)
+		assert.NotNil(t, err)
+		assert.ErrorIs(t, err, LoopEndInvalidError)
+	})
 }
