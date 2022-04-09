@@ -1,7 +1,9 @@
 package brainfuck
 
 import (
+	"bytes"
 	"github.com/stretchr/testify/assert"
+	"strings"
 	"testing"
 )
 
@@ -25,15 +27,23 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 
 		return option
 	}
+	createIoOptions := func() *IoOptions {
+		buffer := bytes.Buffer{}
+		return &IoOptions{
+			CommandReader: strings.NewReader(""),
+			InputReader:   strings.NewReader(""),
+			OutputWriter:  &buffer,
+		}
+	}
 
 	t.Run("should create a brainfuck successfully", func(t *testing.T) {
-		brainfuck, err := NewBrainFuck()
+		brainfuck, err := NewBrainFuck(createIoOptions())
 		assert.Nil(t, err)
 		assert.NotNil(t, brainfuck)
 	})
 
 	t.Run("should have all mandatory commands", func(t *testing.T) {
-		brainfuck, err := NewBrainFuck()
+		brainfuck, err := NewBrainFuck(createIoOptions())
 
 		assert.NotNil(t, brainfuck)
 		assert.Nil(t, err)
@@ -48,7 +58,7 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 	t.Run("should add users' custom operation to the brainfuck", func(t *testing.T) {
 		character := '*'
 		option := createNewOption(character, operation)
-		brainfuck, err := NewBrainFuck(option)
+		brainfuck, err := NewBrainFuck(createIoOptions(), option)
 
 		assert.NotNil(t, brainfuck.commands[character])
 		assert.NotNil(t, brainfuck)
@@ -59,7 +69,7 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 		character := '+'
 		option := createNewOption(character, operation)
 
-		brainfuck, err := NewBrainFuck(option)
+		brainfuck, err := NewBrainFuck(createIoOptions(), option)
 
 		assert.Nil(t, brainfuck)
 		assert.NotNil(t, err)
@@ -71,11 +81,50 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 		character := '*'
 		option := createNewOption(character, nil)
 
-		brainfuck, err := NewBrainFuck(option)
+		brainfuck, err := NewBrainFuck(createIoOptions(), option)
 
 		assert.Nil(t, brainfuck)
 		assert.NotNil(t, err)
 		assert.ErrorIs(t, err, OperationNilError)
 
 	})
+
+	t.Run("should have all io options", func(t *testing.T) {
+		t.Run("should have a command reader", func(t *testing.T) {
+			ioOptions := createIoOptions()
+			ioOptions.CommandReader = nil
+
+			brainfuck, err := NewBrainFuck(ioOptions)
+
+			assert.NotNil(t, err)
+			assert.ErrorIs(t, err, CommandReaderNilError)
+			assert.Nil(t, brainfuck)
+		})
+
+		t.Run("should have a command reader", func(t *testing.T) {
+			ioOptions := createIoOptions()
+			ioOptions.InputReader = nil
+
+			brainfuck, err := NewBrainFuck(ioOptions)
+
+			assert.NotNil(t, err)
+			assert.ErrorIs(t, err, InputReaderNilError)
+			assert.Nil(t, brainfuck)
+		})
+
+		t.Run("should have a output writer", func(t *testing.T) {
+			ioOptions := createIoOptions()
+			ioOptions.OutputWriter = nil
+
+			brainfuck, err := NewBrainFuck(ioOptions)
+
+			assert.NotNil(t, err)
+			assert.ErrorIs(t, err, OutputWriterNilError)
+			assert.Nil(t, brainfuck)
+		})
+	})
+}
+
+func TestBrainFuck_Start(t *testing.T) {
+
 }

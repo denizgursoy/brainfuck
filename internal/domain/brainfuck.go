@@ -1,18 +1,38 @@
 package brainfuck
 
-func NewBrainFuck(options ...Option) (*Brainfuck, error) {
-	brainFuck := createNewBrainFuck()
-	brainFuck.addDefaultOperations()
-	if err := brainFuck.registerOptions(options); err != nil {
+func NewBrainFuck(io *IoOptions, options ...Option) (*Brainfuck, error) {
+	brainfuck, err := createNewBrainFuck(io)
+	if err != nil {
 		return nil, err
 	}
-	return brainFuck, nil
+	brainfuck.addDefaultOperations()
+	if err := brainfuck.registerOptions(options); err != nil {
+		return nil, err
+	}
+	return brainfuck, nil
 }
 
-func createNewBrainFuck() *Brainfuck {
-	return &Brainfuck{
-		commands: make(map[rune]Operation, 7),
+func createNewBrainFuck(io *IoOptions) (*Brainfuck, error) {
+
+	if io.CommandReader == nil {
+		return nil, CommandReaderNilError
 	}
+
+	if io.InputReader == nil {
+		return nil, InputReaderNilError
+	}
+
+	if io.OutputWriter == nil {
+		return nil, OutputWriterNilError
+	}
+
+	brainfuck := Brainfuck{
+		commands:  make(map[rune]Operation, 8),
+		Data:      [30000]byte{},
+		Commands:  [30000]rune{},
+		IoOptions: io,
+	}
+	return &brainfuck, nil
 }
 
 func (b *Brainfuck) addDefaultOperations() {
@@ -25,6 +45,7 @@ func (b *Brainfuck) addDefaultOperations() {
 	_ = b.ExtendWith(CustomOperation{'[', startLoopOperation})
 	_ = b.ExtendWith(CustomOperation{']', endLoopOperation})
 }
+
 func (b *Brainfuck) registerOptions(options []Option) error {
 	for _, customOperation := range options {
 		if err := customOperation(b); err != nil {
