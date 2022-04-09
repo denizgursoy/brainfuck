@@ -94,7 +94,7 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 		start := int64(5)
 		end := int64(15)
 
-		brainfuck.loopStack = append(brainfuck.loopStack, Loop{
+		brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
 			Start: &start,
 			End:   &end,
 		})
@@ -121,7 +121,7 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 			brainfuck.DataPointer = 4
 			brainfuck.Data[brainfuck.DataPointer] = 12
 
-			brainfuck.loopStack = append(brainfuck.loopStack, Loop{
+			brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
 				Start: &start,
 				End:   &end,
 			})
@@ -151,5 +151,75 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 		assert.Equal(t, len(brainfuck.loopStack), 1)
 		assert.Equal(t, *brainfuck.loopStack[0].Start, brainfuck.CommandPointer)
 		assert.Nil(t, brainfuck.loopStack[0].End)
+	})
+}
+
+func TestDefaults_endLoopOperation(t *testing.T) {
+
+	t.Run("should set end to current command pointer", func(t *testing.T) {
+
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		start := int64(5)
+
+		brainfuck.DataPointer = 4
+		brainfuck.Data[brainfuck.DataPointer] = 12
+
+		brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
+			Start: &start,
+			End:   nil,
+		})
+
+		currentCommandPointer := int64(10)
+		brainfuck.CommandPointer = currentCommandPointer
+
+		err := endLoopOperation(brainfuck)
+		assert.Nil(t, err)
+		assert.Equal(t, *brainfuck.loopStack[0].End, currentCommandPointer)
+
+	})
+
+	t.Run("should return to the beginning of loop if value is non zero", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		start := int64(5)
+		end := int64(15)
+
+		brainfuck.DataPointer = 4
+		brainfuck.Data[brainfuck.DataPointer] = 12
+
+		brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
+			Start: &start,
+			End:   &end,
+		})
+
+		err := endLoopOperation(brainfuck)
+		assert.Nil(t, err)
+		assert.Equal(t, brainfuck.CommandPointer, start)
+	})
+
+	t.Run("should pop from stack if the value is 0, and pointer should not change", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		start := int64(5)
+		end := int64(15)
+
+		brainfuck.DataPointer = 4
+		brainfuck.Data[brainfuck.DataPointer] = 0
+
+		brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
+			Start: &start,
+			End:   &end,
+		})
+
+		brainfuck.CommandPointer = end
+
+		err := endLoopOperation(brainfuck)
+		assert.Nil(t, err)
+		assert.Equal(t, brainfuck.CommandPointer, end)
+		assert.Equal(t, len(brainfuck.loopStack), 0)
 	})
 }

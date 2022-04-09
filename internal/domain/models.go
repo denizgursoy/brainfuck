@@ -13,7 +13,7 @@ type Brainfuck struct {
 	Commands       [data_size]rune
 	CommandPointer int64
 	IoOptions      *IoOptions
-	loopStack      []Loop
+	loopStack      []*Loop
 }
 
 type IoOptions struct {

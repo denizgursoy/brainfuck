@@ -35,7 +35,7 @@ func setFromUserInputOperation(b *Brainfuck) error {
 }
 
 func startLoopOperation(b *Brainfuck) error {
-	var loop Loop
+	var loop *Loop
 	if len(b.loopStack) == 0 {
 		loop = addNewLoop(b)
 	} else {
@@ -51,9 +51,21 @@ func startLoopOperation(b *Brainfuck) error {
 	return nil
 }
 
-func addNewLoop(b *Brainfuck) Loop {
+func endLoopOperation(b *Brainfuck) error {
+	if b.getCurrentCellValue() > 0 {
+		loop := peekStack(b)
+		end := b.CommandPointer
+		loop.End = &end
+		b.CommandPointer = *loop.Start
+	} else {
+		popStack(b)
+	}
+	return nil
+}
+
+func addNewLoop(b *Brainfuck) *Loop {
 	start := b.CommandPointer
-	loop := Loop{
+	loop := &Loop{
 		Start: &start,
 		End:   nil,
 	}
@@ -61,6 +73,10 @@ func addNewLoop(b *Brainfuck) Loop {
 	return loop
 }
 
-func endLoopOperation(b *Brainfuck) error {
-	return nil
+func peekStack(b *Brainfuck) *Loop {
+	return b.loopStack[len(b.loopStack)-1]
+}
+
+func popStack(b *Brainfuck) {
+	b.loopStack = b.loopStack[:len(b.loopStack)-1]
 }

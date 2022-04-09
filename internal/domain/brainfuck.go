@@ -31,7 +31,7 @@ func createNewBrainFuck(io *IoOptions) (*Brainfuck, error) {
 		Data:      [30000]byte{},
 		Commands:  [30000]rune{},
 		IoOptions: io,
-		loopStack: make([]Loop, 0),
+		loopStack: make([]*Loop, 0),
 	}
 	return &brainfuck, nil
 }
