@@ -14,4 +14,4 @@ type CustomOperation struct {
 	Operation Operation
 }
 
-type Options func(b *Brainfuck) error
+type Option func(b *Brainfuck) error

@@ -1,6 +1,6 @@
 package brainfuck
 
-func NewBrainFuck(options ...Options) (*Brainfuck, error) {
+func NewBrainFuck(options ...Option) (*Brainfuck, error) {
 	brainFuck := createNewBrainFuck()
 	brainFuck.addDefaultOperations()
 	if err := brainFuck.registerOptions(options); err != nil {
@@ -16,16 +16,16 @@ func createNewBrainFuck() *Brainfuck {
 }
 
 func (b *Brainfuck) addDefaultOperations() {
-	b.commands['+'] = incrementOperation
-	b.commands['-'] = decrementOperation
-	b.commands['>'] = shiftRightOperation
-	b.commands['<'] = shiftLeftOperation
-	b.commands['.'] = printOperation
-	b.commands[','] = readInputOperation
-	b.commands['['] = startLoopOperation
-	b.commands[']'] = endLoopOperation
+	_ = b.ExtendWith(CustomOperation{'+', incrementOperation})
+	_ = b.ExtendWith(CustomOperation{'-', decrementOperation})
+	_ = b.ExtendWith(CustomOperation{'>', shiftRightOperation})
+	_ = b.ExtendWith(CustomOperation{'<', shiftLeftOperation})
+	_ = b.ExtendWith(CustomOperation{'.', printOperation})
+	_ = b.ExtendWith(CustomOperation{',', readInputOperation})
+	_ = b.ExtendWith(CustomOperation{'[', startLoopOperation})
+	_ = b.ExtendWith(CustomOperation{']', endLoopOperation})
 }
-func (b *Brainfuck) registerOptions(options []Options) error {
+func (b *Brainfuck) registerOptions(options []Option) error {
 	for _, customOperation := range options {
 		if err := customOperation(b); err != nil {
 			return err
@@ -45,37 +45,5 @@ func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
 	}
 
 	b.commands[operation.Character] = operation.Operation
-	return nil
-}
-
-func incrementOperation(b *Brainfuck) error {
-	return nil
-}
-
-func decrementOperation(b *Brainfuck) error {
-	return nil
-}
-
-func shiftRightOperation(b *Brainfuck) error {
-	return nil
-}
-
-func shiftLeftOperation(b *Brainfuck) error {
-	return nil
-}
-
-func printOperation(b *Brainfuck) error {
-	return nil
-}
-
-func readInputOperation(b *Brainfuck) error {
-	return nil
-}
-
-func startLoopOperation(b *Brainfuck) error {
-	return nil
-}
-
-func endLoopOperation(b *Brainfuck) error {
 	return nil
 }
