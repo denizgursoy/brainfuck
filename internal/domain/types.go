@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	OperationExistsError = errors.New("operation already exists")
+	OperationNilError    = errors.New("operation can not be nil")
 )
 
 type Operation func(b *Brainfuck) error

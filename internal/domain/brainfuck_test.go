@@ -67,4 +67,25 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.ErrorIs(t, err, OperationExistsError)
 	})
+
+	t.Run("should not add new operator if it is nill", func(t *testing.T) {
+
+		operationCharacter := '*'
+		operation := CustomOperation{
+			Character: operationCharacter,
+			Operation: nil,
+		}
+		option := func(b *Brainfuck) error {
+			if err := b.ExtendWith(operation); err != nil {
+				return err
+			}
+			return nil
+		}
+		brainfuck, err := NewBrainFuck(option)
+
+		assert.Nil(t, brainfuck)
+		assert.NotNil(t, err)
+		assert.ErrorIs(t, err, OperationNilError)
+
+	})
 }
