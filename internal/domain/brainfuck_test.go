@@ -168,6 +168,7 @@ func TestBrainFuck_Start(t *testing.T) {
 
 		brainfuck, _ := NewBrainFuck(ioOptions)
 		_ = brainfuck.Start()
+
 		assert.Equal(t, testCase.Output, string(buffer.Bytes()))
 	}
 }

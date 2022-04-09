@@ -81,7 +81,6 @@ func (b *Brainfuck) getCurrentCellValue() byte {
 func (b *Brainfuck) Start() error {
 
 	for {
-
 		command, inputExists := b.getCommandToExecute()
 		if !inputExists {
 			break
