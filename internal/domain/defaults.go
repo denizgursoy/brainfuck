@@ -11,10 +11,12 @@ func decrementOperation(b *Brainfuck) error {
 }
 
 func shiftRightOperation(b *Brainfuck) error {
+	b.DataPointer++
 	return nil
 }
 
 func shiftLeftOperation(b *Brainfuck) error {
+	b.DataPointer--
 	return nil
 }
 
