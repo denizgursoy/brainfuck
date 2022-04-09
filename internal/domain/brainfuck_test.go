@@ -17,7 +17,26 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 		brainfuck, _ := NewBrainFuck()
 		mandatoryOperationCharacters := []rune{'+', '-', '>', '<', '.', ',', '[', ']'}
 		for _, character := range mandatoryOperationCharacters {
-			assert.NotNil(t, brainfuck.Commands[character])
+			assert.NotNil(t, brainfuck.commands[character])
 		}
+	})
+
+	t.Run("should add users' custom operation to the brainfuck", func(t *testing.T) {
+		operationCharacter := '*'
+		operation := CustomOperation{
+			Character: operationCharacter,
+			Operation: func(b *Brainfuck) error {
+				return nil
+			},
+		}
+		option := func(b *Brainfuck) error {
+			if err := b.ExtendWith(operation); err != nil {
+				return err
+			}
+			return nil
+		}
+		brainfuck, _ := NewBrainFuck(option)
+
+		assert.NotNil(t, brainfuck.commands[operationCharacter])
 	})
 }
