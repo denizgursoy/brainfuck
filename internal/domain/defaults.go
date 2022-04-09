@@ -21,7 +21,10 @@ func shiftLeftOperation(b *Brainfuck) error {
 }
 
 func printOperation(b *Brainfuck) error {
-	return nil
+	bytes := make([]byte, 0)
+	bytes = append(bytes, b.getCurrentCellValue())
+	_, err := b.IoOptions.OutputWriter.Write(bytes)
+	return err
 }
 
 func readInputOperation(b *Brainfuck) error {
