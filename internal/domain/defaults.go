@@ -1,5 +1,7 @@
 package brainfuck
 
+import "fmt"
+
 func incrementOperation(b *Brainfuck) error {
 	b.Data[b.DataPointer]++
 	return nil
@@ -46,6 +48,8 @@ func startLoopOperation(b *Brainfuck) error {
 	}
 
 	if b.getCurrentCellValue() == 0 {
+		s := string(b.Commands)
+		fmt.Println(s)
 		b.CommandPointer = *loop.End
 	}
 	return nil

@@ -3,6 +3,7 @@ package brainfuck
 import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"strings"
 	"testing"
 )
@@ -44,7 +45,7 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 		assert.NotNil(t, brainfuck)
 	})
 
-	t.Run("should have all mandatory commands", func(t *testing.T) {
+	t.Run("should have all mandatory operations", func(t *testing.T) {
 		brainfuck, err := NewBrainFuck(createIoOptions())
 
 		assert.NotNil(t, brainfuck)
@@ -52,7 +53,7 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 
 		mandatoryOperationCharacters := []rune{'+', '-', '>', '<', '.', ',', '[', ']'}
 		for _, character := range mandatoryOperationCharacters {
-			assert.NotNil(t, brainfuck.commands[character])
+			assert.NotNil(t, brainfuck.operations[character])
 		}
 
 	})
@@ -62,7 +63,7 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 		option := createNewOption(character, operation)
 		brainfuck, err := NewBrainFuck(createIoOptions(), option)
 
-		assert.NotNil(t, brainfuck.commands[character])
+		assert.NotNil(t, brainfuck.operations[character])
 		assert.NotNil(t, brainfuck)
 		assert.Nil(t, err)
 	})
@@ -127,6 +128,46 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 	})
 }
 
-func TestBrainFuck_Start(t *testing.T) {
+func TestBrainFuck_calculateCommandToExecute(t *testing.T) {
+	t.Run("should read from command reader if command pointer is at last", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		ioOptions.CommandReader = strings.NewReader(">")
+		brainfuck, err := NewBrainFuck(ioOptions)
+		brainfuck.getCommandToExecute()
 
+		assert.Nil(t, err)
+		assert.Equal(t, brainfuck.Commands[0], '>')
+	})
+}
+
+func TestBrainFuck_Start(t *testing.T) {
+	helloWorld, _ := ioutil.ReadFile("bf/Hello.bf")
+	sixHundred, _ := ioutil.ReadFile("bf/666.bf")
+
+	table := []struct {
+		Input  string
+		Output string
+	}{
+		{
+			Input:  string(helloWorld),
+			Output: "Hello World!\n",
+		},
+		{
+			Input:  string(sixHundred),
+			Output: "666\n",
+		},
+	}
+
+	for _, testCase := range table {
+
+		ioOptions := createIoOptions()
+		buffer := bytes.Buffer{}
+
+		ioOptions.CommandReader = strings.NewReader(testCase.Input)
+		ioOptions.OutputWriter = &buffer
+
+		brainfuck, _ := NewBrainFuck(ioOptions)
+		_ = brainfuck.Start()
+		assert.Equal(t, testCase.Output, string(buffer.Bytes()))
+	}
 }

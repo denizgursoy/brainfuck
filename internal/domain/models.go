@@ -7,10 +7,10 @@ const (
 )
 
 type Brainfuck struct {
-	commands       map[rune]Operation
+	operations     map[rune]Operation
 	Data           [data_size]byte
 	DataPointer    int64
-	Commands       [data_size]rune
+	Commands       []rune
 	CommandPointer int64
 	IoOptions      *IoOptions
 	loopStack      []*Loop

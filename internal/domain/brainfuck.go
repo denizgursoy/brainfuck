@@ -1,5 +1,9 @@
 package brainfuck
 
+import (
+	"io"
+)
+
 func NewBrainFuck(io *IoOptions, options ...Option) (*Brainfuck, error) {
 	brainfuck, err := createNewBrainFuck(io)
 	if err != nil {
@@ -27,11 +31,11 @@ func createNewBrainFuck(io *IoOptions) (*Brainfuck, error) {
 	}
 
 	brainfuck := Brainfuck{
-		commands:  make(map[rune]Operation, 8),
-		Data:      [30000]byte{},
-		Commands:  [30000]rune{},
-		IoOptions: io,
-		loopStack: make([]*Loop, 0),
+		operations: make(map[rune]Operation, 8),
+		Data:       [30000]byte{},
+		Commands:   make([]rune, 0),
+		IoOptions:  io,
+		loopStack:  make([]*Loop, 0),
 	}
 	return &brainfuck, nil
 }
@@ -62,14 +66,80 @@ func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
 		return OperationNilError
 	}
 
-	if b.commands[operation.Character] != nil {
+	if b.operations[operation.Character] != nil {
 		return OperationExistsError
 	}
 
-	b.commands[operation.Character] = operation.Operation
+	b.operations[operation.Character] = operation.Operation
 	return nil
 }
 
 func (b *Brainfuck) getCurrentCellValue() byte {
 	return b.Data[b.DataPointer]
+}
+
+func (b *Brainfuck) Start() error {
+
+	for {
+
+		command, inputExists := b.getCommandToExecute()
+		if !inputExists {
+			break
+		}
+
+		if err := b.performOperation(command); err != nil {
+			return err
+		}
+		b.CommandPointer++
+	}
+	return nil
+}
+
+func (b *Brainfuck) getCommandToExecute() (*rune, bool) {
+	var command *rune
+	if b.isCommandPointerAtLast() {
+		definedCommand, inputExists := b.readCommand()
+		if !inputExists {
+			return nil, false
+		}
+		b.addNewCommand(definedCommand)
+		command = definedCommand
+	} else {
+		command = &b.Commands[b.CommandPointer]
+	}
+	return command, true
+}
+
+func (b *Brainfuck) performOperation(command *rune) error {
+	operation := b.operations[*command]
+	return operation(b)
+}
+
+//func (b *Brainfuck) isCommandDefined(c *rune) bool {
+//
+//	for _, v := range b.Commands {
+//		if v == *c {
+//			return true
+//		}
+//	}
+//
+//	return false
+//}
+
+func (b *Brainfuck) addNewCommand(command *rune) {
+	b.Commands = append(b.Commands, *command)
+}
+
+func (b *Brainfuck) readCommand() (*rune, bool) {
+	bytes := make([]byte, 1)
+	_, err := b.IoOptions.CommandReader.Read(bytes)
+	if err == io.EOF {
+		return nil, false
+	}
+	command := rune(bytes[0])
+	return &command, true
+}
+
+func (b *Brainfuck) isCommandPointerAtLast() bool {
+	return b.CommandPointer == int64(len(b.Commands))
 }
