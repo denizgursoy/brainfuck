@@ -13,4 +13,11 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 		assert.NotNil(t, brainfuck)
 	})
 
+	t.Run("should have all mandatory commands", func(t *testing.T) {
+		brainfuck, _ := NewBrainFuck()
+		mandatoryOperationCharacters := []rune{'+', '-', '>', '<', '.', ',', '[', ']'}
+		for _, character := range mandatoryOperationCharacters {
+			assert.NotNil(t, brainfuck.Commands[character])
+		}
+	})
 }
