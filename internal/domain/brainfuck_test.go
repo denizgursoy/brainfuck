@@ -7,13 +7,12 @@ import (
 	"testing"
 )
 
-func TestBrainFuck_NewBrainFuck(t *testing.T) {
-
-	operation := func(b *Brainfuck) error {
+var (
+	operation = func(b *Brainfuck) error {
 		return nil
 	}
 
-	createNewOption := func(character rune, operation Operation) Option {
+	createNewOption = func(character rune, operation Operation) Option {
 		customOperation := CustomOperation{
 			Character: character,
 			Operation: operation,
@@ -27,7 +26,7 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 
 		return option
 	}
-	createIoOptions := func() *IoOptions {
+	createIoOptions = func() *IoOptions {
 		buffer := bytes.Buffer{}
 		return &IoOptions{
 			CommandReader: strings.NewReader(""),
@@ -35,6 +34,9 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 			OutputWriter:  &buffer,
 		}
 	}
+)
+
+func TestBrainFuck_NewBrainFuck(t *testing.T) {
 
 	t.Run("should create a brainfuck successfully", func(t *testing.T) {
 		brainfuck, err := NewBrainFuck(createIoOptions())

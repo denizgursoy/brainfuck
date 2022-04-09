@@ -68,3 +68,7 @@ func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
 	b.commands[operation.Character] = operation.Operation
 	return nil
 }
+
+func (b *Brainfuck) getCurrentCellValue() byte {
+	return b.Data[b.DataPointer]
+}

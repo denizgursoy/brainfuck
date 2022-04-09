@@ -1,10 +1,12 @@
 package brainfuck
 
 func incrementOperation(b *Brainfuck) error {
+	b.Data[b.DataPointer]++
 	return nil
 }
 
 func decrementOperation(b *Brainfuck) error {
+	b.Data[b.DataPointer]--
 	return nil
 }
 
