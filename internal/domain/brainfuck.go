@@ -35,6 +35,10 @@ func (b *Brainfuck) registerOptions(options []Options) error {
 }
 
 func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
+	if b.commands[operation.Character] != nil {
+		return OperationExistsError
+	}
+
 	b.commands[operation.Character] = operation.Operation
 	return nil
 }
