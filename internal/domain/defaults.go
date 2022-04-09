@@ -27,8 +27,11 @@ func printOperation(b *Brainfuck) error {
 	return err
 }
 
-func readInputOperation(b *Brainfuck) error {
-	return nil
+func setFromUserInputOperation(b *Brainfuck) error {
+	bytes := make([]byte, 1)
+	_, err := b.IoOptions.InputReader.Read(bytes)
+	b.Data[b.DataPointer] = bytes[0]
+	return err
 }
 
 func startLoopOperation(b *Brainfuck) error {

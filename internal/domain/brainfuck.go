@@ -41,7 +41,7 @@ func (b *Brainfuck) addDefaultOperations() {
 	_ = b.ExtendWith(CustomOperation{'>', shiftRightOperation})
 	_ = b.ExtendWith(CustomOperation{'<', shiftLeftOperation})
 	_ = b.ExtendWith(CustomOperation{'.', printOperation})
-	_ = b.ExtendWith(CustomOperation{',', readInputOperation})
+	_ = b.ExtendWith(CustomOperation{',', setFromUserInputOperation})
 	_ = b.ExtendWith(CustomOperation{'[', startLoopOperation})
 	_ = b.ExtendWith(CustomOperation{']', endLoopOperation})
 }

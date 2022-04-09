@@ -3,6 +3,7 @@ package brainfuck
 import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
+	"strings"
 	"testing"
 )
 
@@ -67,4 +68,20 @@ func TestDefaults_printOperation(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, buffer.Bytes()[0], byte(16))
+}
+
+func TestDefaults_setFromUserInputOperation(t *testing.T) {
+	ioOptions := createIoOptions()
+
+	ioOptions.InputReader = strings.NewReader("input")
+
+	brainfuck, _ := NewBrainFuck(ioOptions)
+
+	brainfuck.DataPointer = 4
+	brainfuck.Data[brainfuck.DataPointer] = 16
+
+	err := setFromUserInputOperation(brainfuck)
+
+	assert.Nil(t, err)
+	assert.Equal(t, brainfuck.getCurrentCellValue(), byte(105))
 }
