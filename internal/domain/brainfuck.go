@@ -66,11 +66,12 @@ func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
 		return OperationNilError
 	}
 
-	if b.operations[operation.Character] != nil {
+	character := operation.Character
+	if b.isCommandDefined(&character) {
 		return OperationExistsError
 	}
 
-	b.operations[operation.Character] = operation.Operation
+	b.operations[character] = operation.Operation
 	return nil
 }
 
@@ -114,16 +115,9 @@ func (b *Brainfuck) performOperation(command *rune) error {
 	return operation(b)
 }
 
-//func (b *Brainfuck) isCommandDefined(c *rune) bool {
-//
-//	for _, v := range b.Commands {
-//		if v == *c {
-//			return true
-//		}
-//	}
-//
-//	return false
-//}
+func (b *Brainfuck) isCommandDefined(c *rune) bool {
+	return b.operations[*c] != nil
+}
 
 func (b *Brainfuck) addNewCommand(command *rune) {
 	b.Commands = append(b.Commands, *command)
@@ -136,6 +130,11 @@ func (b *Brainfuck) readCommand() (*rune, bool) {
 		return nil, false
 	}
 	command := rune(bytes[0])
+
+	if !b.isCommandDefined(&command) {
+		return b.readCommand()
+	}
+
 	return &command, true
 }
 
