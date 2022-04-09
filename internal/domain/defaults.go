@@ -35,7 +35,30 @@ func setFromUserInputOperation(b *Brainfuck) error {
 }
 
 func startLoopOperation(b *Brainfuck) error {
+	var loop Loop
+	if len(b.loopStack) == 0 {
+		loop = addNewLoop(b)
+	} else {
+		loop = b.loopStack[len(b.loopStack)-1]
+		if *loop.Start != b.CommandPointer {
+			loop = addNewLoop(b)
+		}
+	}
+
+	if b.getCurrentCellValue() == 0 {
+		b.CommandPointer = *loop.End
+	}
 	return nil
+}
+
+func addNewLoop(b *Brainfuck) Loop {
+	start := b.CommandPointer
+	loop := Loop{
+		Start: &start,
+		End:   nil,
+	}
+	b.loopStack = append(b.loopStack, loop)
+	return loop
 }
 
 func endLoopOperation(b *Brainfuck) error {

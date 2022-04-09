@@ -85,3 +85,71 @@ func TestDefaults_setFromUserInputOperation(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, brainfuck.getCurrentCellValue(), byte(105))
 }
+
+func TestDefaults_startLoopOperation(t *testing.T) {
+	t.Run("should go to the end of loop if the cell value is 0", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		start := int64(5)
+		end := int64(15)
+
+		brainfuck.loopStack = append(brainfuck.loopStack, Loop{
+			Start: &start,
+			End:   &end,
+		})
+
+		brainfuck.CommandPointer = start
+
+		brainfuck.DataPointer = 4
+		brainfuck.Data[brainfuck.DataPointer] = 0
+
+		err := startLoopOperation(brainfuck)
+
+		assert.Nil(t, err)
+		assert.Equal(t, brainfuck.CommandPointer, end)
+	})
+
+	t.Run("should add new loop to stack if loop is nested",
+		func(t *testing.T) {
+			ioOptions := createIoOptions()
+			brainfuck, _ := NewBrainFuck(ioOptions)
+
+			start := int64(5)
+			end := int64(15)
+
+			brainfuck.DataPointer = 4
+			brainfuck.Data[brainfuck.DataPointer] = 12
+
+			brainfuck.loopStack = append(brainfuck.loopStack, Loop{
+				Start: &start,
+				End:   &end,
+			})
+
+			brainfuck.CommandPointer = int64(10)
+
+			err := startLoopOperation(brainfuck)
+
+			assert.Nil(t, err)
+			assert.Equal(t, len(brainfuck.loopStack), 2)
+			assert.Equal(t, *brainfuck.loopStack[1].Start, brainfuck.CommandPointer)
+			assert.Nil(t, brainfuck.loopStack[1].End)
+		})
+
+	t.Run("should add loop if the stack is empty", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		brainfuck.CommandPointer = int64(10)
+
+		brainfuck.DataPointer = 4
+		brainfuck.Data[brainfuck.DataPointer] = 12
+
+		err := startLoopOperation(brainfuck)
+
+		assert.Nil(t, err)
+		assert.Equal(t, len(brainfuck.loopStack), 1)
+		assert.Equal(t, *brainfuck.loopStack[0].Start, brainfuck.CommandPointer)
+		assert.Nil(t, brainfuck.loopStack[0].End)
+	})
+}

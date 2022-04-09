@@ -13,10 +13,21 @@ type Brainfuck struct {
 	Commands       [data_size]rune
 	CommandPointer int64
 	IoOptions      *IoOptions
+	loopStack      []Loop
 }
 
 type IoOptions struct {
 	CommandReader io.Reader
 	InputReader   io.Reader
 	OutputWriter  io.Writer
+}
+
+type CustomOperation struct {
+	Character rune
+	Operation Operation
+}
+
+type Loop struct {
+	Start *int64
+	End   *int64
 }

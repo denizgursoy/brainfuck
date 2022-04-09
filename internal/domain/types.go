@@ -12,9 +12,4 @@ var (
 
 type Operation func(b *Brainfuck) error
 
-type CustomOperation struct {
-	Character rune
-	Operation Operation
-}
-
 type Option func(b *Brainfuck) error
