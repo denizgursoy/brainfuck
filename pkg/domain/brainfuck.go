@@ -4,6 +4,10 @@ import (
 	"io"
 )
 
+// NewBrainFuck creates a new brainfuck. Requires IoOptions pointers which has no nil
+// reader or writers. A brainfuck might have custom defined operation, so it also receives
+// options as much as user pleases. IoOptions fields are checked if they exist, or it returns
+// CommandReaderNilError, InputReaderNilError,OutputWriterNilError errors.
 func NewBrainFuck(io *IoOptions, options ...Option) (*Brainfuck, error) {
 	brainfuck, err := createNewBrainFuck(io)
 	if err != nil {
@@ -16,6 +20,8 @@ func NewBrainFuck(io *IoOptions, options ...Option) (*Brainfuck, error) {
 	return brainfuck, nil
 }
 
+// createNewBrainFuck checks if all io options are provided and initializes slices and maps
+// on brainfuck struct.
 func createNewBrainFuck(io *IoOptions) (*Brainfuck, error) {
 
 	if io.CommandReader == nil {
@@ -40,6 +46,7 @@ func createNewBrainFuck(io *IoOptions) (*Brainfuck, error) {
 	return &brainfuck, nil
 }
 
+// addDefaultOperations adds 8 mandatory operations to the brainfuck
 func (b *Brainfuck) addDefaultOperations() {
 	_ = b.ExtendWith(CustomOperation{'+', incrementOperation})
 	_ = b.ExtendWith(CustomOperation{'-', decrementOperation})
@@ -51,6 +58,8 @@ func (b *Brainfuck) addDefaultOperations() {
 	_ = b.ExtendWith(CustomOperation{']', endLoopOperation})
 }
 
+// registerOptions calls options provided by the caller on NewBrainFuck.
+// It allows user to customize brainfuck. In this case, it allows user to add new operations
 func (b *Brainfuck) registerOptions(options []Option) error {
 	for _, customOperation := range options {
 		if err := customOperation(b); err != nil {
@@ -60,6 +69,10 @@ func (b *Brainfuck) registerOptions(options []Option) error {
 	return nil
 }
 
+// ExtendWith adds new operations to brainfuck.
+// CustomOperation can not have characters which is already defined.
+// OperationNilError is returned when operation is nil
+// OperationExistsError is returned when CustomOperation's character is already defined
 func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
 
 	if operation.Operation == nil {
@@ -75,10 +88,14 @@ func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
 	return nil
 }
 
+// getCurrentCellValue return value of cell which data pointer is showing
 func (b *Brainfuck) getCurrentCellValue() byte {
 	return b.Data[b.DataPointer]
 }
 
+// Start triggers reading from CommandReader and executes the operation relating to command
+// return error if executed operation returns errors.
+// it executes until there is no more input to read in the happy case
 func (b *Brainfuck) Start() error {
 
 	for {
@@ -95,6 +112,9 @@ func (b *Brainfuck) Start() error {
 	return nil
 }
 
+// getCommandToExecute calculates which command will be executed next.
+// if the CommandPointer is at last item, it reads from CommandReader and executes newly read command
+//f the CommandPointer is not at last item, it processes the next item.
 func (b *Brainfuck) getCommandToExecute() (*rune, bool) {
 	var command *rune
 	if b.isCommandPointerAtLast() {
@@ -110,15 +130,18 @@ func (b *Brainfuck) getCommandToExecute() (*rune, bool) {
 	return command, true
 }
 
+// performOperation executes the Operation related to command
 func (b *Brainfuck) performOperation(command *rune) error {
 	operation := b.operations[*command]
 	return operation(b)
 }
 
+// isCommandDefined checks is a command is defined before
 func (b *Brainfuck) isCommandDefined(c *rune) bool {
 	return b.operations[*c] != nil
 }
 
+// addNewCommand appends new command to Commands
 func (b *Brainfuck) addNewCommand(command *rune) {
 	b.Commands = append(b.Commands, *command)
 }
