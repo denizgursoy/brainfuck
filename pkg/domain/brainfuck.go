@@ -123,6 +123,10 @@ func (b *Brainfuck) addNewCommand(command *rune) {
 	b.Commands = append(b.Commands, *command)
 }
 
+// readCommand reads a rune from user command reader
+// if command read from reader is not defined,
+// it skips the command and reads new file
+// return rune read or bool showing if there is something to read
 func (b *Brainfuck) readCommand() (*rune, bool) {
 	bytes := make([]byte, 1)
 	_, err := b.IoOptions.CommandReader.Read(bytes)
@@ -138,6 +142,7 @@ func (b *Brainfuck) readCommand() (*rune, bool) {
 	return &command, true
 }
 
+// isCommandPointerAtLast check if last command is executed or not
 func (b *Brainfuck) isCommandPointerAtLast() bool {
 	return b.CommandPointer == int64(len(b.Commands))
 }
