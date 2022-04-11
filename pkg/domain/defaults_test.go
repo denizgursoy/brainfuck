@@ -30,27 +30,58 @@ func TestDefaults_decrementOperation(t *testing.T) {
 }
 
 func TestDefaults_shiftRightOperation(t *testing.T) {
-	ioOptions := createIoOptions()
-	brainfuck, _ := NewBrainFuck(ioOptions)
+	t.Run("should shift to right if position is not at last", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
 
-	brainfuck.DataPointer = 4
+		brainfuck.Data = append(brainfuck.Data, 1, 2, 3, 4)
 
-	err := shiftRightOperation(brainfuck)
+		brainfuck.DataPointer = 0
 
-	assert.Nil(t, err)
-	assert.Equal(t, brainfuck.DataPointer, int64(5))
+		err := shiftRightOperation(brainfuck)
+
+		assert.Nil(t, err)
+		assert.Equal(t, brainfuck.DataPointer, int64(1))
+	})
+
+	t.Run("should increase size of data slice if position is at last", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		brainfuck.DataPointer = InitialCapacity - 1
+
+		err := shiftRightOperation(brainfuck)
+
+		assert.Nil(t, err)
+		assert.Equal(t, brainfuck.DataPointer, int64(InitialCapacity))
+		assert.Equal(t, len(brainfuck.Data), InitialCapacity+1)
+	})
 }
 
 func TestDefaults_shiftLeftOperation(t *testing.T) {
-	ioOptions := createIoOptions()
-	brainfuck, _ := NewBrainFuck(ioOptions)
+	t.Run("should shift to left if the current poisiton is not 0", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
 
-	brainfuck.DataPointer = 4
+		brainfuck.DataPointer = 4
 
-	err := shiftLeftOperation(brainfuck)
+		err := shiftLeftOperation(brainfuck)
 
-	assert.Nil(t, err)
-	assert.Equal(t, brainfuck.DataPointer, int64(3))
+		assert.Nil(t, err)
+		assert.Equal(t, brainfuck.DataPointer, int64(3))
+	})
+
+	t.Run("should return error if the current position is 0", func(t *testing.T) {
+		ioOptions := createIoOptions()
+		brainfuck, _ := NewBrainFuck(ioOptions)
+
+		brainfuck.DataPointer = 0
+
+		err := shiftLeftOperation(brainfuck)
+
+		assert.NotNil(t, err)
+		assert.ErrorIs(t, err, ShiftLeftNoSpaceError)
+	})
 }
 
 func TestDefaults_printOperation(t *testing.T) {

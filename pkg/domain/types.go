@@ -10,6 +10,7 @@ var (
 	OutputWriterNilError   = errors.New("output writer can not be empty")
 	LoopEndInvalidError    = errors.New("invalid loop end because it did not start")
 	LoopEndIsNotFoundError = errors.New("end of the loop is not found while executing one command at a time ")
+	ShiftLeftNoSpaceError  = errors.New("can not move pointer to left because it is at first position")
 )
 
 // Operation is a function which is related to a Command

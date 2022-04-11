@@ -11,11 +11,17 @@ func decrementOperation(b *Brainfuck) error {
 }
 
 func shiftRightOperation(b *Brainfuck) error {
+	if b.DataPointer == int64(len(b.Data))-1 {
+		b.Data = append(b.Data, 0)
+	}
 	b.DataPointer++
 	return nil
 }
 
 func shiftLeftOperation(b *Brainfuck) error {
+	if b.DataPointer == 0 {
+		return ShiftLeftNoSpaceError
+	}
 	b.DataPointer--
 	return nil
 }
