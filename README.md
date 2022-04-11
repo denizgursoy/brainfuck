@@ -14,4 +14,29 @@ Initial capacity should be at least one. There is also a test checking that
 Test can be run with
 `make test-all` or `go test -v ./...`
 
+## Customization
 
+New operations can be added during the creation of Brainfuck. As it can be seen in the example below,
+User needs to create an option which calls `ExtendWith` method of brainfuck. `ExtendWith` method takes Operation
+and the Character related to it.
+
+```go
+
+    ioOptions := brainfuck.IoOptions{
+		CommandReader: commandFile,
+		InputReader:   inputFile,
+		OutputWriter:  outputFile,
+	}
+
+	multiplyOption := func(b *brainfuck.Brainfuck) error {
+		return b.ExtendWith(brainfuck.CustomOperation{
+			Character: '*',
+			Operation: func(b *brainfuck.Brainfuck) error {
+				b.Data[b.DataPointer] = b.Data[b.DataPointer] * 2
+				return nil
+			},
+		})
+	}
+
+	brainFuck, err := brainfuck.NewBrainFuck(&ioOptions, multiplyOption)
+```
