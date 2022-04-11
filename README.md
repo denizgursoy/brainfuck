@@ -20,6 +20,8 @@ New operations can be added during the creation of Brainfuck. As it can be seen 
 User needs to create an option which calls `ExtendWith` method of brainfuck. `ExtendWith` method takes Operation
 and the Character related to it.
 
+I used [Option pattern](https://www.sohamkamani.com/golang/options-pattern/) for the customization of brainfuck. 
+
 ```go
 
     ioOptions := brainfuck.IoOptions{
