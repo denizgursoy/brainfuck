@@ -1,5 +1,7 @@
 package brainfuck
 
+import "unicode/utf8"
+
 func incrementOperation(b *Brainfuck) error {
 	b.Data[b.DataPointer]++
 	return nil
@@ -27,8 +29,8 @@ func shiftLeftOperation(b *Brainfuck) error {
 }
 
 func printOperation(b *Brainfuck) error {
-	bytes := make([]byte, 0)
-	bytes = append(bytes, b.getCurrentCellValue())
+	bytes := make([]byte, 1)
+	_ = utf8.EncodeRune(bytes, b.getCurrentCellValue())
 	_, err := b.IoOptions.OutputWriter.Write(bytes)
 	return err
 }
@@ -36,7 +38,8 @@ func printOperation(b *Brainfuck) error {
 func setFromUserInputOperation(b *Brainfuck) error {
 	bytes := make([]byte, 1)
 	_, err := b.IoOptions.InputReader.Read(bytes)
-	b.Data[b.DataPointer] = bytes[0]
+	decodeRune, _ := utf8.DecodeRune(bytes)
+	b.Data[b.DataPointer] = decodeRune
 	return err
 }
 

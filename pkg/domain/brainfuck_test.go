@@ -154,7 +154,7 @@ func TestBrainFuck_calculateCommandToExecute(t *testing.T) {
 		brainfuck.getCommandToExecute()
 
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.Commands[0], '>')
+		assert.Equal(t, '>', brainfuck.Commands[0])
 	})
 }
 

@@ -14,7 +14,7 @@ func TestDefaults_incrementOperation(t *testing.T) {
 
 	err := incrementOperation(brainfuck)
 	assert.Nil(t, err)
-	assert.Equal(t, brainfuck.getCurrentCellValue(), byte(1))
+	assert.EqualValues(t, 1, brainfuck.getCurrentCellValue())
 }
 
 func TestDefaults_decrementOperation(t *testing.T) {
@@ -26,7 +26,7 @@ func TestDefaults_decrementOperation(t *testing.T) {
 	err := decrementOperation(brainfuck)
 
 	assert.Nil(t, err)
-	assert.Equal(t, brainfuck.getCurrentCellValue(), byte(4))
+	assert.EqualValues(t, 4, brainfuck.getCurrentCellValue())
 }
 
 func TestDefaults_shiftRightOperation(t *testing.T) {
@@ -41,7 +41,7 @@ func TestDefaults_shiftRightOperation(t *testing.T) {
 		err := shiftRightOperation(brainfuck)
 
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.DataPointer, int64(1))
+		assert.EqualValues(t, 1, brainfuck.DataPointer)
 	})
 
 	t.Run("should increase size of data slice if position is at last", func(t *testing.T) {
@@ -53,8 +53,8 @@ func TestDefaults_shiftRightOperation(t *testing.T) {
 		err := shiftRightOperation(brainfuck)
 
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.DataPointer, int64(InitialCapacity))
-		assert.Equal(t, len(brainfuck.Data), InitialCapacity+1)
+		assert.EqualValues(t, InitialCapacity, brainfuck.DataPointer)
+		assert.EqualValues(t, InitialCapacity+1, len(brainfuck.Data))
 	})
 }
 
@@ -69,7 +69,7 @@ func TestDefaults_shiftLeftOperation(t *testing.T) {
 		err := shiftLeftOperation(brainfuck)
 
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.DataPointer, position-1)
+		assert.EqualValues(t, position-1, brainfuck.DataPointer)
 	})
 
 	t.Run("should return error if the current position is 0", func(t *testing.T) {
@@ -99,7 +99,7 @@ func TestDefaults_printOperation(t *testing.T) {
 	err := printOperation(brainfuck)
 
 	assert.Nil(t, err)
-	assert.Equal(t, buffer.Bytes()[0], byte(16))
+	assert.EqualValues(t, 16, buffer.Bytes()[0])
 }
 
 func TestDefaults_setFromUserInputOperation(t *testing.T) {
@@ -115,7 +115,7 @@ func TestDefaults_setFromUserInputOperation(t *testing.T) {
 	err := setFromUserInputOperation(brainfuck)
 
 	assert.Nil(t, err)
-	assert.Equal(t, brainfuck.getCurrentCellValue(), byte(105))
+	assert.EqualValues(t, 105, brainfuck.getCurrentCellValue())
 }
 
 func TestDefaults_startLoopOperation(t *testing.T) {
@@ -139,7 +139,7 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 		err := startLoopOperation(brainfuck)
 
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.CommandPointer, end)
+		assert.EqualValues(t, end, brainfuck.CommandPointer)
 	})
 
 	t.Run("should add new loop to stack if loop is nested",
@@ -163,8 +163,8 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 			err := startLoopOperation(brainfuck)
 
 			assert.Nil(t, err)
-			assert.Equal(t, len(brainfuck.loopStack), 2)
-			assert.Equal(t, *brainfuck.loopStack[1].Start, brainfuck.CommandPointer)
+			assert.EqualValues(t, 2, len(brainfuck.loopStack))
+			assert.EqualValues(t, brainfuck.CommandPointer, *brainfuck.loopStack[1].Start)
 			assert.Nil(t, brainfuck.loopStack[1].End)
 		})
 
@@ -180,8 +180,8 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 		err := startLoopOperation(brainfuck)
 
 		assert.Nil(t, err)
-		assert.Equal(t, len(brainfuck.loopStack), 1)
-		assert.Equal(t, *brainfuck.loopStack[0].Start, brainfuck.CommandPointer)
+		assert.EqualValues(t, 1, len(brainfuck.loopStack))
+		assert.EqualValues(t, brainfuck.CommandPointer, *brainfuck.loopStack[0].Start)
 		assert.Nil(t, brainfuck.loopStack[0].End)
 	})
 }
@@ -208,7 +208,7 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 
 		err := endLoopOperation(brainfuck)
 		assert.Nil(t, err)
-		assert.Equal(t, *brainfuck.loopStack[0].End, currentCommandPointer)
+		assert.EqualValues(t, *brainfuck.loopStack[0].End, currentCommandPointer)
 
 	})
 
@@ -229,7 +229,7 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 
 		err := endLoopOperation(brainfuck)
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.CommandPointer, start)
+		assert.EqualValues(t, start, brainfuck.CommandPointer)
 	})
 
 	t.Run("should pop from stack if the value is 0, and pointer should not change", func(t *testing.T) {
@@ -251,8 +251,8 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 
 		err := endLoopOperation(brainfuck)
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.CommandPointer, end)
-		assert.Equal(t, len(brainfuck.loopStack), 0)
+		assert.EqualValues(t, end, brainfuck.CommandPointer)
+		assert.EqualValues(t, 0, len(brainfuck.loopStack))
 	})
 
 	t.Run("should return error is stack is empty", func(t *testing.T) {

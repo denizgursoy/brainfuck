@@ -10,7 +10,7 @@ import "io"
 // IoOptions stores all readers and writers needed.
 type Brainfuck struct {
 	operations     map[rune]Operation
-	Data           []byte
+	Data           []rune
 	DataPointer    int64
 	Commands       []rune
 	CommandPointer int64

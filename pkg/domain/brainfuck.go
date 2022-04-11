@@ -42,7 +42,7 @@ func createNewBrainFuck(io *IoOptions) (*Brainfuck, error) {
 
 	brainfuck := Brainfuck{
 		operations: make(map[rune]Operation, 8),
-		Data:       make([]byte, InitialCapacity),
+		Data:       make([]rune, InitialCapacity),
 		Commands:   make([]rune, 0),
 		IoOptions:  io,
 		loopStack:  make([]*Loop, 0),
@@ -93,7 +93,7 @@ func (b *Brainfuck) ExtendWith(operation CustomOperation) error {
 }
 
 // getCurrentCellValue return value of cell which data pointer is showing
-func (b *Brainfuck) getCurrentCellValue() byte {
+func (b *Brainfuck) getCurrentCellValue() rune {
 	return b.Data[b.DataPointer]
 }
 
