@@ -4,6 +4,10 @@ import (
 	"io"
 )
 
+const (
+	InitialCapacity = 1000
+)
+
 // NewBrainFuck creates a new brainfuck. Requires IoOptions pointers which has no nil
 // reader or writers. A brainfuck might have custom defined operation, so it also receives
 // options as much as user pleases. IoOptions fields are checked if they exist, or it returns
@@ -38,7 +42,7 @@ func createNewBrainFuck(io *IoOptions) (*Brainfuck, error) {
 
 	brainfuck := Brainfuck{
 		operations: make(map[rune]Operation, 8),
-		Data:       [30000]byte{},
+		Data:       make([]byte, InitialCapacity),
 		Commands:   make([]rune, 0),
 		IoOptions:  io,
 		loopStack:  make([]*Loop, 0),

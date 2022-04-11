@@ -125,6 +125,18 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 			assert.ErrorIs(t, err, OutputWriterNilError)
 			assert.Nil(t, brainfuck)
 		})
+
+		t.Run("should initialize all slice in the brainfuck", func(t *testing.T) {
+			ioOptions := createIoOptions()
+
+			brainfuck, err := NewBrainFuck(ioOptions)
+			assert.Nil(t, err)
+			assert.NotNil(t, brainfuck.operations)
+			assert.NotNil(t, brainfuck.Commands)
+
+			assert.NotNil(t, brainfuck.Data)
+			assert.Len(t, brainfuck.Data, InitialCapacity)
+		})
 	})
 }
 

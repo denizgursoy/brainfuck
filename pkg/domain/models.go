@@ -2,10 +2,6 @@ package brainfuck
 
 import "io"
 
-const (
-	data_size = 30000
-)
-
 // Brainfuck is the main struct that holds all the data needed to run operations successfully,
 // Data holds cell values. DataPointer show the current cell location which is being modified.
 // Commands slice stores all the command in order they are added.
@@ -14,7 +10,7 @@ const (
 // IoOptions stores all readers and writers needed.
 type Brainfuck struct {
 	operations     map[rune]Operation
-	Data           [data_size]byte
+	Data           []byte
 	DataPointer    int64
 	Commands       []rune
 	CommandPointer int64
