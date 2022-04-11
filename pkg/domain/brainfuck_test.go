@@ -126,6 +126,10 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 			assert.Nil(t, brainfuck)
 		})
 
+		t.Run("should have initial capacity of at least 1", func(t *testing.T) {
+			assert.Greater(t, InitialCapacity, 0)
+		})
+
 		t.Run("should initialize all slice in the brainfuck", func(t *testing.T) {
 			ioOptions := createIoOptions()
 
@@ -136,6 +140,8 @@ func TestBrainFuck_NewBrainFuck(t *testing.T) {
 
 			assert.NotNil(t, brainfuck.Data)
 			assert.Len(t, brainfuck.Data, InitialCapacity)
+
+			assert.NotNil(t, brainfuck.loopStack)
 		})
 	})
 }

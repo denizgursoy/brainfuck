@@ -59,16 +59,17 @@ func TestDefaults_shiftRightOperation(t *testing.T) {
 }
 
 func TestDefaults_shiftLeftOperation(t *testing.T) {
-	t.Run("should shift to left if the current poisiton is not 0", func(t *testing.T) {
+	t.Run("should shift to left if the current position is not 0", func(t *testing.T) {
 		ioOptions := createIoOptions()
 		brainfuck, _ := NewBrainFuck(ioOptions)
 
-		brainfuck.DataPointer = 4
+		position := int64(1)
+		brainfuck.DataPointer = position
 
 		err := shiftLeftOperation(brainfuck)
 
 		assert.Nil(t, err)
-		assert.Equal(t, brainfuck.DataPointer, int64(3))
+		assert.Equal(t, brainfuck.DataPointer, position-1)
 	})
 
 	t.Run("should return error if the current position is 0", func(t *testing.T) {
@@ -92,7 +93,7 @@ func TestDefaults_printOperation(t *testing.T) {
 
 	brainfuck, _ := NewBrainFuck(ioOptions)
 
-	brainfuck.DataPointer = 4
+	brainfuck.DataPointer = 0
 	brainfuck.Data[brainfuck.DataPointer] = 16
 
 	err := printOperation(brainfuck)
@@ -108,7 +109,7 @@ func TestDefaults_setFromUserInputOperation(t *testing.T) {
 
 	brainfuck, _ := NewBrainFuck(ioOptions)
 
-	brainfuck.DataPointer = 4
+	brainfuck.DataPointer = 0
 	brainfuck.Data[brainfuck.DataPointer] = 16
 
 	err := setFromUserInputOperation(brainfuck)
@@ -132,7 +133,7 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 
 		brainfuck.CommandPointer = start
 
-		brainfuck.DataPointer = 4
+		brainfuck.DataPointer = 0
 		brainfuck.Data[brainfuck.DataPointer] = 0
 
 		err := startLoopOperation(brainfuck)
@@ -149,7 +150,7 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 			start := int64(5)
 			end := int64(15)
 
-			brainfuck.DataPointer = 4
+			brainfuck.DataPointer = 0
 			brainfuck.Data[brainfuck.DataPointer] = 12
 
 			brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
@@ -173,7 +174,7 @@ func TestDefaults_startLoopOperation(t *testing.T) {
 
 		brainfuck.CommandPointer = int64(10)
 
-		brainfuck.DataPointer = 4
+		brainfuck.DataPointer = 0
 		brainfuck.Data[brainfuck.DataPointer] = 12
 
 		err := startLoopOperation(brainfuck)
@@ -194,7 +195,7 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 
 		start := int64(5)
 
-		brainfuck.DataPointer = 4
+		brainfuck.DataPointer = 0
 		brainfuck.Data[brainfuck.DataPointer] = 12
 
 		brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
@@ -218,7 +219,7 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 		start := int64(5)
 		end := int64(15)
 
-		brainfuck.DataPointer = 4
+		brainfuck.DataPointer = 0
 		brainfuck.Data[brainfuck.DataPointer] = 12
 
 		brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
@@ -238,7 +239,7 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 		start := int64(5)
 		end := int64(15)
 
-		brainfuck.DataPointer = 4
+		brainfuck.DataPointer = 0
 		brainfuck.Data[brainfuck.DataPointer] = 0
 
 		brainfuck.loopStack = append(brainfuck.loopStack, &Loop{
@@ -258,7 +259,7 @@ func TestDefaults_endLoopOperation(t *testing.T) {
 		ioOptions := createIoOptions()
 		brainfuck, _ := NewBrainFuck(ioOptions)
 
-		brainfuck.DataPointer = 4
+		brainfuck.DataPointer = 0
 		brainfuck.Data[brainfuck.DataPointer] = 0
 
 		err := endLoopOperation(brainfuck)
